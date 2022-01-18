@@ -1,0 +1,29 @@
+<aura:component controller="LightningSampleService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!-- attributes -->
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="AccName" type="String"/>
+    <aura:attribute name="Phone" type="String"/>
+    
+    <!-- handlers-->
+    <aura:handler name="init" value="{!this }" action="{!c.init }"/>
+        
+    <!-- the container element determine the height of the datatable -->
+    <lightning:card title="Account DataTable" iconName="standard:account">
+        <div class="slds-p-around_small">
+            <lightning:datatable aura:id="accountTable"
+                                 keyField="id"
+                                 data="{!v.data }"
+                                 columns="{!v.columns }"
+                                 hideCheckboxColumn="true"/>
+        </div>
+    </lightning:card>
+    <div style="background-color:white; margin:5px; padding:3px;">
+        <div class="row">
+            <h2 class="header">Account Insert</h2>
+            <lightning:input label="Account Name" name="accountName" required="true" value="{!v.AccName}"/>
+            <lightning:input label="Phone" name="Phone" maxlength="13" value="{!v.Phone}" messageWhenTooLong="A maximum of 13 characters are allowed in a tweet."/>
+            <lightning:button label="Insert" title="Neutral action" onclick="{!c.handleClick }"/>
+        </div>
+    </div>
+</aura:component>
