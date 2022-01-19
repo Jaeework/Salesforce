@@ -1,0 +1,17 @@
+<apex:page standardController="Account" recordSetVar="Accounts">
+    <apex:includeLightning />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <div id="LightningComponentid"/>
+    <script>
+    	$Lightning.use("c:LightningSampleApp", function() {
+        $Lightning.createComponent("c:LightningSample",
+          { 
+          },
+          "LightningComponentid",
+          function(cmp) {
+             console.log('Display Lightning component in visualforce page');
+          });
+   		 });
+    
+    </script>
+</apex:page>
