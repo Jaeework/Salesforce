@@ -1,0 +1,23 @@
+<apex:page id="thePage" standardController="Account" recordSetVar="Accounts" extensions="VisualforceController,SearchInVFController">
+    <apex:pageBlock title="Account Visualforce Table">
+        <apex:pageBlockTable value="{!accounts}" var="account" id="theTable" rowClasses="odd,even" width="75%">
+            <apex:column value="{!account.name}"/>
+            <apex:column value="{!account.industry}"/>  
+            <apex:column value="{!account.type}"/>            
+            <apex:column value="{!account.phone}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    <apex:pageBlock title="Account Serch">
+    	<apex:form >
+        	<apex:inputText value="{!searchKey}" label="Input"/>
+            <apex:commandButton value="Search" action="{!search}"/>
+            <apex:commandButton value="Clear" action="{!clear}"/>
+        </apex:form>
+        <apex:pageBlockTable value="{!acc}" var="a">
+            <apex:column value="{!a.name}"/>
+            <apex:column value="{!a.industry}"/>
+            <apex:column value="{!a.type}"/>
+            <apex:column value="{!a.phone}"/>
+        </apex:pageBlockTable>       
+    </apex:pageBlock>            
+</apex:page>
