@@ -1,0 +1,65 @@
+.THIS .input-search .slds-form-element__label{
+	display: none;
+}
+
+.THIS .slds-form .slds-align_absolute-center{
+    display : none;
+}
+
+.THIS .input-search .slds-form-element__label{
+    display: none !important;
+}
+.THIS .slds-card__header{
+    display: none;
+}
+.THIS .slds-card__body {
+    margin-top: 0;
+}
+.THIS .triggerLink{
+    overflow:initial;
+}
+.THIS .triggerLinkText.slds-truncate{
+	position: relative;
+    top: -7px;
+}
+.THIS .slds-media__body .slds-var-p-right_x-small{
+    position: relative;
+    top: -3px;
+}
+.THIS .slds-button.downIcon{
+    margin-top :-13px;
+}
+.THIS .triggerLink .forceListViewPicker{
+    position: relative;
+    top: -10px;
+}
+.THIS .slds-form-element{
+    display: block;
+    border: none;
+    border-radius: 0;
+}
+
+.THIS .slds-form-element .slds-form-element__label {
+    display: none;
+}
+
+.THIS .triggerLink slds-button slds-button--reset slds-type-focus slds-truncate slds-page-header__title slds-text-color--default forceListViewPicker{
+	position: relative;
+    top: -30px;
+    left: -13px;
+}
+.THIS .slds-input.slds-combobox__input{
+	border: none;
+    background: none;
+    font-weight:bold;
+    padding: 0;
+   
+}
+
+.THIS .slds-icon-utility-check .slds-icon_x-small{
+    color: rgb(1, 118, 211);
+}
+
+.THIS .slds-media.slds-listbox__option.slds-media_center.slds-media_small.slds-listbox__option_plain{
+font-weight:lighter;
+}

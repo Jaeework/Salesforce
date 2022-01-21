@@ -1,0 +1,299 @@
+<aura:component controller="AccountSampleService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="accName" type="String"/>
+    <aura:attribute name="isDelete" type="Boolean" default="false" />
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="string" default="asc" />
+    <aura:attribute name="selectedAccs" type="List" />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="options" type="List" default="[]" />
+    <aura:attribute name="cntItem" type="String"/>
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/>
+    <aura:attribute name="test" type="String" default="0"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- the container element determine the height of the datatable -->
+    <lightning:card class="slds-text-heading_x-small slds-card_boundary">
+        <!-- customize Header Start -->
+        <div class="slds-page-header" style="margin:0px; top:0px">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media slds-no-space slds-grow">
+                            <div class="slds-icon slds-page-header__icon">
+                                <lightning:icon iconName="standard:account" />
+                            </div>
+                            
+                            <div class="slds-media__body slds-align-middle" style="margin-left:8px">
+                                <span class="slds-var-p-right_x-small"> Accounts</span>
+                                <div class="slds-grid slds-media__body">
+                                    <div class="triggerLink slds-button slds-button--reset slds-type-focus slds-truncate slds-page-header__title slds-text-color--default forceListViewPicker" data-aura-class="forceListViewPicker">
+                                        <div class="triggerLinkTextAndIconWrapper slds-page-header__name">
+                                            <div class="slds-page-header__name-title">
+                                                <h1>
+                                                    <lightning:combobox aura:id="selectItem"  name="listViewOption"
+                                                                        value="all_accounts" onchange="{!c.handleChange}" options="{!v.options}"/>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <!-- Button group: simple buttons Start-->
+                            <ul class="slds-button-group-list">
+                                <li>
+                                    <div style="float:right; margin-bottom : 10px">
+                                        
+                                        <lightning:buttonGroup>
+                                            <lightning:button label="New" onclick="{!c.createRecord}"/>
+                                            <lightning:button label="Delete" onclick="{!c.deleteAcc}"/>
+                                        </lightning:buttonGroup>
+                                    </div>
+                                </li>
+                            </ul>
+                            <!-- Button group: simple buttons End-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-meta">
+                    <p class="countSortedByFilteredBy">{!v.cntItem} items • Updated a few seconds ago</p>
+                </div>
+                <!--Search Area Start-->
+                <div style="width:250px; float:right;overflow:hidden;margin-left:10px;">
+                    <lightning:input class="input-search"
+                                     aura:id="SearchBox"
+                                     type="search"
+                                     value="{!v.accName}"
+                                     placeholder="Search this list..."
+                                     style="width:100%; float:left;margin:0px;"
+                                     oncommit="searchAccs"
+                                     />
+                </div>
+                <!--Search Area End-->
+                <div class="slds-page-header__col-controls">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                                <button class="slds-button slds-button_icon slds-button_icon-more" aria-haspopup="true" aria-expanded="false" title="List View Controls" onclick="{!c.fieldsForm}">
+                                    <lightning:icon iconName="utility:settings" size="x-small" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__control">
+                            <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                                <button class="slds-button slds-button_icon slds-button_icon-more" aria-haspopup="true" aria-expanded="false" title="Change view">
+                                    <lightning:icon iconName="utility:table" size="x-small" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__control">
+                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Edit List">
+                                <lightning:icon iconName="utility:edit" size="x-small" />
+                            </button>
+                        </div>
+                        <div class="slds-page-header__control">
+                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Refresh List">
+                                <lightning:icon iconName="utility:refresh" size="x-small" />
+                            </button>
+                        </div>
+                        <div class="slds-page-header__control">
+                            <ul class="slds-button-group-list">
+                                <li>
+                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Charts">
+                                        <lightning:icon iconName="utility:chart" size="x-small" />
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Filters">
+                                        <lightning:icon iconName="utility:filterList" size="x-small" />
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <!-- datatable --> 
+        <div class="slds-scrollable_y slds-m-bottom_small" style="height:700px;">
+            <lightning:datatable 
+                                 aura:id="accountTable"
+                                 keyField="id"
+                                 showRowNumberColumn="true"
+                                 data="{!v.data}"
+                                 columns="{!v.columns}"
+                                 onsort="{!c.updateColumnSorting}"
+                                 sortedBy="{!v.sortedBy}"
+                                 sortedDirection="{!v.sortedDirection}"
+                                 onrowselection="{!c.handleSelect}"
+                                 onrowaction="{!c.handleRowAction }" />
+             
+            <div class="slds-clearfix">
+                <div class="slds-page-header" role="banner">
+                    <div class="slds-float_right">            
+                        <lightning:button label="Prev" iconName="utility:chevronleft" iconPosition="left"
+                                          onclick="{!c.handlePrev}" disabled="{! v.pageNumber == 1}"/>
+                        <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
+                                          disabled="{! v.isLastPage}" onclick="{!c.handleNext}"/>
+                    </div>
+                    <p class="slds-page-header__row">Page {!v.pageNumber}</p>
+                </div>
+            </div>
+        </div>
+        
+    </lightning:card>
+
+    
+	<!-- Delete Modal Window -->
+    <aura:if isTrue="{!v.isDelete}">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Delete Account</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" align="center">
+                    <p>Are you sure you want to delete this account?</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.handleCancel}">Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick="{!c.handleDelete}">Delete</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+
+    
+
+
+
+
+    <!--
+    <lightning:card iconName="standard:account" title="Accounts" class="lightningCard">
+        <div class="slds" >
+            <div style="display:flex; justify-content:space-between; margin: 1% 0;">
+                <div>
+                    <lightning:buttonGroup>
+                        <lightning:button label="New" onclick="{!c.insertForm}" name="modal"/>
+                        <lightning:button label="Delete" onclick="{!c.deleteAcc}"/>
+                    </lightning:buttonGroup>
+                </div>
+                <div style="display:flex; justify-content:space-around;">
+                    <lightning:input class="input-search" type="search" name="Account Name" placeholder="Search this list..." value="{!v.accName}" oncommit="{!c.searchAccs}"/>
+                </div>
+                
+            </div>            
+            <div class="slds-scrollable_y slds-m-bottom_small" style="height: 700px">
+                <lightning:datatable 
+                                     aura:id="accountTable"
+                                     keyField="id"
+                                     showRowNumberColumn="true"
+                                     data="{!v.data}"
+                                     columns="{!v.columns}"
+                                     onsort="{!c.updateColumnSorting}"
+                                     sortedBy="{!v.sortedBy}"
+                                     sortedDirection="{!v.sortedDirection}"
+                                     onrowselection="{!c.handleSelect}"
+                                     onrowaction="{!c.handleRowAction }" />
+            </div>
+        </div>
+    </lightning:card>
+    -->
+    <!-- New Modal Window -->
+    
+    <!--<lightning:overlayLibrary aura:id="overlayLib" />-->
+    <!--
+    <aura:if isTrue="{!v.isOpen}">
+        <div role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
+             aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName = "utility:close"
+                                          onclick = "{! c.handleCancel }"
+                                          alternativeText = "close"
+                                          variant = "bare-inverse"
+                                          class = "slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Account</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:card>
+                        <lightning:recordForm aura:id="insertForm"
+                                              class="slds-form"
+                                              layoutType="full"
+                                              objectApiName="Account"
+                                              oncancel="{!c.handleCancel}"
+                                              onsuccess="{!c.handleSuccess}"
+                                              />
+                    </lightning:card>
+                </div>
+                <footer class="slds-modal__footer" >
+                    <div align="center">
+                        <button class="slds-button slds-button_neutral" onclick="{!c.handleCancel}">Cancel</button>
+                        <button class="slds-button slds-button_neutral" onclick="{!c.handleSaveAndNew}">Save &amp; New</button >
+                        <button class="slds-button slds-button_brand" onclick="{!c.handleSave}">Save</button>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    -->
+    
+    <!-- Edit Modal Window 
+    <aura:if isTrue="{!v.isEdit}">
+        <div role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
+             aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName = "utility:close"
+                                          onclick = "{! c.handleCancel }"
+                                          alternativeText = "close"
+                                          variant = "bare-inverse"
+                                          class = "slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Edit</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:recordForm
+                                          aura:id="editForm"
+                                          recordId="{!v.recordId}"
+                                          objectApiName="Account"
+                                          layoutType ="Full"
+                                          columns="2"
+                                          mode="edit"
+                                          onsubmit="{!c.handleSubmit}"
+                                          oncancel="{!c.handleCancel}"/>
+                </div>
+                <footer class="slds-modal__footer" >
+                    <div align="center">
+                        <button class="slds-button slds-button_neutral" onclick="{!c.handleCancel}">Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick="{!c.handleSubmit}">Save</button>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    -->
+    
+    
+</aura:component>
