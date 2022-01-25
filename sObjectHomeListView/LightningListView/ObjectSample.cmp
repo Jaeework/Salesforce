@@ -1,0 +1,29 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global"
+                controller="ObjectSampleService">
+    <!-- aura attributes -->   
+    <aura:attribute name="currentListViewName" type="string" />
+    <aura:attribute name="bShowListView" type="boolean" default="false"/> 
+    <aura:attribute name="options" type="List" default="[]"/> 
+      
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- the container element determine the height of the datatable -->
+    <div>
+        <lightning:combobox aura:id="selectItem"  name="listViewOption"
+                            value="all_accounts" onchange="{!c.combobox}" options="{!v.options}"/>
+    </div>
+    
+    <div>
+        <aura:if isTrue="{!v.bShowListView}">
+            <lightning:listView objectApiName="Account"
+                                listName="{!v.currentListViewName}"
+                                showSearchBar="true"
+                                showActionBar="true"
+                                enableInlineEdit="true"
+                                showRowLevelActions="true"
+                                rows="10"
+                                />
+        </aura:if>
+    </div>    
+</aura:component>
