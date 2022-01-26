@@ -1,0 +1,62 @@
+<aura:component controller="CommentService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="comment" type="String" />
+    <aura:attribute name="countItem" type="Decimal" />
+    <aura:attribute name="selectedRows" type="List" default="[]"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    <aura:handler event="force:showToast" action="{!c.handleToast}" />
+    
+    <!-- the container element determine the height of the datatable -->
+    <lightning:card>
+        <div class="slds-page-header__col-meta">
+            <div class="countSortedByFilteredBy">
+                comments : {!v.countItem}
+            </div>
+        </div>
+        <div align="right">
+            <lightning:button label="New" onclick="{!c.insertCmt}"/>
+            <lightning:button label="Delete" onclick="{!c.deleteCmts}" />
+        </div>
+        <div style="height: 300px">
+            <lightning:datatable
+                                 columns="{! v.columns }"
+                                 data="{! v.data }"
+                                 keyField="id"
+                                 onrowselection="{!c.handleSelect}"
+                                 onrowaction="{! c.handleRowAction }"/>
+        </div>
+    </lightning:card>
+    
+    <!-- insesrt Modal -->
+    <div class="slds-m-around_xx-large">
+        <aura:if isTrue="{!v.isOpen}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!--header-->
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Comment</h2>
+                    </header>
+                    <!--body-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <lightning:input type="text" label="comment"
+                                                 value="{!v.comment}"
+                                                 disabledCategories="FORMAT_TEXT"
+                                                 />
+                        
+                    </div>
+                    <!--footer-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.close }"/>
+                        <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.insert }"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+
+</aura:component>
