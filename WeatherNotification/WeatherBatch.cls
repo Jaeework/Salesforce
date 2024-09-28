@@ -1,8 +1,8 @@
-global class DailyWeatherBatch implements Database.Batchable<sObject>, Database.Stateful, Database.AllowsCallouts  {
+global class WeatherBatch implements Database.Batchable<sObject>, Database.Stateful, Database.AllowsCallouts  {
     String weatherApiKey;
     Datetime currentTime;
         
-    global DailyWeatherBatch(){
+    global WeatherBatch(){
         // OpenWeatherMap API keys
         weatherApiKey = 'your_api_key';
         currentTime = Datetime.now();
